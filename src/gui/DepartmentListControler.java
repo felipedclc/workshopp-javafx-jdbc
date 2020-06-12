@@ -57,7 +57,7 @@ public class DepartmentListControler implements Initializable {
 		tableViewDepartment.prefHeightProperty().bind(stage.heightProperty()); // METODO PARA O TABLE VIEW SE ADAPTAR AO TAMANHO DA JANELA
 	}
 
-	public void updateTableView() { // METODO RESPONSÁVEL POR ATUALIZAR OS DEPARTAMENTOS E INSERIR NA LITA OBSLIST
+	public void updateTableView() { // METODO RESPONSÁVEL POR ATUALIZAR OS DEPARTAMENTOS E INSERIR NA LISTA OBSLIST
 		if(service == null) {
 			throw new IllegalStateException("Service was null");
 		}
