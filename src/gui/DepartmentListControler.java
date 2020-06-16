@@ -40,13 +40,14 @@ public class DepartmentListControler implements Initializable {
 	
 	@FXML
 	private Button btNew;
-	
+		
 	private ObservableList<Department> obsList; // LISTA CRIADA PARA CARREGAR OS DEPARTMENTOS
 
 	@FXML
 	private void onBtNewAction(ActionEvent event) {  // REFERENCIA PARA O CONTROLE QUE RECEBEU O EVENTO 
 		Stage parentStage = gui.util.Utils.currentStage(event); // ACESSANDO O STAGE (PALCO)
-		createDialogForm("/gui/DepartmentForm.fxml", parentStage);
+		Department obj = new Department(); // FORMULÁRIO DEVE COMEÇAR VAZIO APÓS APERTAR O BOTÃO "NEW"
+		createDialogForm(obj, "/gui/DepartmentForm.fxml", parentStage);
 	}
 	
 	public void setDepartmentService(DepartmentService service) { // METTODO SOLID, NÃO FOI INSTANCIADO O DEPARTMENT SERVICE
@@ -76,10 +77,14 @@ public class DepartmentListControler implements Initializable {
 		
 	}
 	
-	private void createDialogForm(String absoluteName, Stage parentStage) {
+	private void createDialogForm(Department obj, String absoluteName, Stage parentStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName)); //CARREGANDO A JANELA (VIEW "absoluteName")
 			Pane pane = loader.load(); // CARREGANDO A VIEW
+			
+			DepartmentFormController controller = loader.getController(); // PEGANDO O CONTROLADOR DA TELA CARREGADA ACIMA
+			controller.setDepartment(obj); // INJETANDO O DEPARTAMENTO NO CONTROLLER
+			controller.updateFormData(); // CARREGANDO OS DADOS NO FORMULARIO
 			
 			Stage dialogStage = new Stage(); // CRIANDO UMA JANELA PARA ABRIR EM CIMA DA OUTRA
 			dialogStage.setTitle("Enter Department data"); 
