@@ -28,12 +28,11 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 		try {
 			st = conn.prepareStatement(
 					"INSERT INTO department "
-					+ "(Id, Name) "
+					+ "(Name) "
 					+ "VALUES "
-					+ "(?, ?)",
+					+ "(?)",
 					Statement.RETURN_GENERATED_KEYS);
-			st.setInt(1, obj.getId());
-			st.setString(2, obj.getName());
+			st.setString(1, obj.getName());
 			
 			int rowsAffected = st.executeUpdate();
 			
