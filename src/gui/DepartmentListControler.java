@@ -1,18 +1,26 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.util.Alerts;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
@@ -36,8 +44,9 @@ public class DepartmentListControler implements Initializable {
 	private ObservableList<Department> obsList; // LISTA CRIADA PARA CARREGAR OS DEPARTMENTOS
 
 	@FXML
-	private void onBtNewAction() {
-		System.out.println("onBtNewAction");
+	private void onBtNewAction(ActionEvent event) {  // REFERENCIA PARA O CONTROLE QUE RECEBEU O EVENTO 
+		Stage parentStage = gui.util.Utils.currentStage(event); // ACESSANDO O STAGE (PALCO)
+		createDialogForm("/gui/DepartmentForm.fxml", parentStage);
 	}
 	
 	public void setDepartmentService(DepartmentService service) { // METTODO SOLID, NÃO FOI INSTANCIADO O DEPARTMENT SERVICE
@@ -65,5 +74,23 @@ public class DepartmentListControler implements Initializable {
 		obsList = FXCollections.observableArrayList(list); // JOGA TUDO NO OBSLIST
 		tableViewDepartment.setItems(obsList); // CARREGA OS ITENS NA TELA
 		
+	}
+	
+	private void createDialogForm(String absoluteName, Stage parentStage) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName)); //CARREGANDO A JANELA (VIEW "absoluteName")
+			Pane pane = loader.load(); // CARREGANDO A VIEW
+			
+			Stage dialogStage = new Stage(); // CRIANDO UMA JANELA PARA ABRIR EM CIMA DA OUTRA
+			dialogStage.setTitle("Enter Department data"); 
+			dialogStage.setScene(new Scene(pane)); // CARREGANDO O NOVO PAINEL NA NOVA CENA
+			dialogStage.setResizable(false); // A JANELA NÃO PODE SER REDIMENSIONADA(FALSE)
+			dialogStage.initOwner(parentStage); // O PARENT STAGE É O "PAI" DA JANELA 
+			dialogStage.initModality(Modality.WINDOW_MODAL); // JANELA FICA TRAVADA E NÃO DEIXA ACESSAR A ANTERIOR 
+			dialogStage.showAndWait(); // COMANDO PARA CARREGAR 
+		}
+		catch(IOException e) {
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
 	}
 }
