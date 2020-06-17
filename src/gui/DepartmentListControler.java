@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.listener.DataChangeListner;
 import gui.util.Alerts;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +26,7 @@ import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
 
-public class DepartmentListControler implements Initializable {
+public class DepartmentListControler implements Initializable, DataChangeListner {
 	
 	private DepartmentService service;
 
@@ -85,6 +86,7 @@ public class DepartmentListControler implements Initializable {
 			DepartmentFormController controller = loader.getController(); // PEGANDO O CONTROLADOR DA TELA CARREGADA ACIMA
 			controller.setDepartment(obj); // INJETANDO O DEPARTAMENTO NO CONTROLLER
 			controller.setDepartmentService(new DepartmentService()); // INJETANDO O DEPARTMENT SERVICE NO CONTROLLER
+			controller.subscribeDataChangeListener(this); // INSCREVENDO O METODO PARA ATUALIZAR A JANELA COM O METODO (ON DATA CHANGED)
 			controller.updateFormData(); // CARREGANDO OS DADOS NO FORMULARIO
 			
 			Stage dialogStage = new Stage(); // CRIANDO UMA JANELA PARA ABRIR EM CIMA DA OUTRA
@@ -98,5 +100,11 @@ public class DepartmentListControler implements Initializable {
 		catch(IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
+	}
+
+	@Override
+	public void onDataChanged() { // METODO QUE ATUALIZA A LISTA APOS A EXECUÇÃO NA JANELA "FORM CONTROLLER"
+		updateTableView(); 
+		
 	}
 }

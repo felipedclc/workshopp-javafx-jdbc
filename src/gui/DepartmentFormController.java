@@ -1,9 +1,12 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DbException;
+import gui.listener.DataChangeListner;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -22,6 +25,8 @@ public class DepartmentFormController implements Initializable {
 	private Department entity; // CRIADO PARA PREENCHER A LISTA DE DEPARTAMENTOS NA JANELA
 	
 	private DepartmentService service; 
+	
+	private List<DataChangeListner> dataChangeListner = new ArrayList<>(); // LISTA DE OBJETOS QUE RECEBEM O EVENTO
 	
 	@FXML
 	private TextField txtId;
@@ -46,6 +51,10 @@ public class DepartmentFormController implements Initializable {
 		this.service = service;
 	}
 	
+	public void subscribeDataChangeListener(DataChangeListner listener) { // CLASSE VAI SOBRESCREVER A LISTA (ATUALIZAR)
+		dataChangeListner.add(listener);
+	}
+	
 	@FXML
 	public void onBtSaveAction(ActionEvent event) {
 		if (entity == null) { // PROTEÇÃO CASO O PROGRADADOR ESQUEÇA DE INJETAR A DEPENDENCIA DO DEPARTMENT NO CONTROLLER 
@@ -56,7 +65,8 @@ public class DepartmentFormController implements Initializable {
 		}
 		try {
 			entity = getFormData();
-			service.saveOrUpdate(entity);
+			service.saveOrUpdate(entity); 
+			notifyDataChangeListeners(); // METODO QUE AVISA O CHANGE LISTENER QUE DEVE SER ATIVADO
 			Utils.currentStage(event).close(); // FECHA A JANELA APÓS APERTAR O BOTÃO SAVE
 		}
 		catch (DbException e) { // EXCEÇÃO PARA O BANCO DE DADOS
@@ -64,6 +74,12 @@ public class DepartmentFormController implements Initializable {
 		}
 	}
 	
+	private void notifyDataChangeListeners() { // FUNÇÃO QUE EMITE O EVENTO PARA OS LISTENERS
+		for(DataChangeListner listener : dataChangeListner) {
+			listener.onDataChanged();
+		}
+	}
+
 	private Department getFormData() {
 		Department obj = new Department();
 		
