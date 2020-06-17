@@ -7,19 +7,22 @@ import model.dao.DepartmentDao;
 import model.entities.Department;
 
 public class DepartmentService {
-	
+
 	private DepartmentDao dao = DaoFactory.createDepartmentDao();
 
-	public List<Department> findAll(){
+	public List<Department> findAll() {
 		return dao.findAll(); // BUSCA TODOS OS DEPARTAMENTOS NO BANCO DE DADOS
 	}
-	
-	public void saveOrUpdate(Department obj) { // METODO PARA INSERIR OU SALVAR O DEPARTMANETO NO BANCO 
-		if(obj.getId() == null) {
+
+	public void saveOrUpdate(Department obj) { // METODO PARA INSERIR OU SALVAR O DEPARTMANETO NO BANCO
+		if (obj.getId() == null) {
 			dao.insert(obj);
-		}
-		else {
+		} else {
 			dao.update(obj);
 		}
+	}
+
+	public void remove(Department obj) { // REMOVENDO UM DEPARTAMENTO DO BANCO DE DADOS
+		dao.deleteById(obj.getId());
 	}
 }
