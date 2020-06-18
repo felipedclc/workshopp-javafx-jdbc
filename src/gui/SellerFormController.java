@@ -15,16 +15,24 @@ import gui.listener.DataChangeListner;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
+import model.entities.Department;
 import model.entities.Seller;
 import model.exceptions.ValidationException;
+import model.services.DepartmentService;
 import model.services.SellerService;
 
 public class SellerFormController implements Initializable {
@@ -32,6 +40,8 @@ public class SellerFormController implements Initializable {
 	private Seller entity; // CRIADO PARA PREENCHER A LISTA DE DEPARTAMENTOS NA JANELA
 
 	private SellerService service;
+
+	private DepartmentService departmentService;
 
 	private List<DataChangeListner> dataChangeListner = new ArrayList<>(); // LISTA DE OBJETOS QUE RECEBEM O EVENTO
 
@@ -51,6 +61,9 @@ public class SellerFormController implements Initializable {
 	private TextField txtBaseSalary;
 
 	@FXML
+	private ComboBox<Department> comboBoxDepartment;
+
+	@FXML
 	private Label labelErrorName;
 
 	@FXML
@@ -68,12 +81,15 @@ public class SellerFormController implements Initializable {
 	@FXML
 	private Button btCancel;
 
+	private ObservableList<Department> obsList;
+
 	public void setSeller(Seller entity) { // INJEÇÃO DE DEPENDÊNCIA
 		this.entity = entity;
 	}
 
-	public void setSellerService(SellerService service) {
+	public void setServices(SellerService service, DepartmentService departmentService) {
 		this.service = service;
+		this.departmentService = departmentService;
 	}
 
 	public void subscribeDataChangeListener(DataChangeListner listener) { // CLASSE VAI SOBRESCREVER A LISTA (ATUALIZAR)
@@ -144,6 +160,8 @@ public class SellerFormController implements Initializable {
 		Constraints.setTextFieldDouble(txtBaseSalary);
 		Constraints.setTextFieldMaxLength(txtEmail, 60);
 		Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
+		
+		initializeComboBoxDepartment(); // INICIANDO O COMBO BOX
 	}
 
 	public void updateFormData() { // METODO PARA ATUALIZAR OS DADOS DO DEPARTMENT COM A LISTA
@@ -155,9 +173,24 @@ public class SellerFormController implements Initializable {
 		txtEmail.setText(entity.getEmail());
 		Locale.setDefault(Locale.US);
 		txtBaseSalary.setText(String.format("%.2f", entity.getBaseSalary()));
-		if(entity.getBirthDate() != null){
-			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault())); 
-		}																								
+		if (entity.getBirthDate() != null) {
+			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
+		}
+		if(entity.getDepartment() == null) { // SE O DEPARTAMENTO ESTIVER VAZIO(FOR NOVO)
+			comboBoxDepartment.getSelectionModel().selectFirst(); // SELECIONA O PRIMEIRO ELEMENTO
+		}
+		else {
+		comboBoxDepartment.setValue(entity.getDepartment()); // PREENCHENDO OS DADOS DO VENDEDOR NO COMBO BOX
+		}
+	}
+
+	public void loadAssociatedObjects() { // CARREGANDO OS OBJETOS ASSOCIADOS
+		if (departmentService == null) {
+			throw new IllegalStateException("DepartmentService was null "); // O PROGRAMADOR ESQUECEU DE INSTANCIAR
+		}
+		List<Department> list = departmentService.findAll(); // PROCURANDO TODOS OS DEPARTAMENTOS
+		obsList = FXCollections.observableArrayList(list); // CARREGANDO OS DEPARTAENTOS NA OBSLIST
+		comboBoxDepartment.setItems(obsList); // SETANDO(EDITANDO) O OBSLIST E ASSOCIANDO AO COMBOBOX DEPARTMENT
 	}
 
 	private void setErrorMessages(Map<String, String> errors) { // COLEÇÃO QUE PERCORRE A LISTA/COLEÇÃO(MAP) CARRGA OS
@@ -167,5 +200,17 @@ public class SellerFormController implements Initializable {
 		if (fields.contains("name")) { // SE NO SET(FIELDS) CONTER A CHAVE NAME
 			labelErrorName.setText(errors.get("name")); // O TEXTO LABEL APRESENTARÁ A MENSAGEM DE ERRO
 		}
+	}
+
+	private void initializeComboBoxDepartment() { // CODIGO PARA INICIAR O COMBO BOX
+		Callback<ListView<Department>, ListCell<Department>> factory = lv -> new ListCell<Department>() {
+			@Override
+			protected void updateItem(Department item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty ? "" : item.getName());
+			}
+		};
+		comboBoxDepartment.setCellFactory(factory);
+		comboBoxDepartment.setButtonCell(factory.call(null));
 	}
 }

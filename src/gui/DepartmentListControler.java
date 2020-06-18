@@ -116,6 +116,7 @@ public class DepartmentListControler implements Initializable, DataChangeListner
 			dialogStage.initModality(Modality.WINDOW_MODAL); // JANELA FICA TRAVADA E NÃO DEIXA ACESSAR A ANTERIOR
 			dialogStage.showAndWait(); // COMANDO PARA CARREGAR
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}

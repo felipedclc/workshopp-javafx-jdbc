@@ -31,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
+import model.services.DepartmentService;
 import model.services.SellerService;
 
 public class SellerListControler implements Initializable, DataChangeListner {
@@ -120,7 +121,8 @@ public class SellerListControler implements Initializable, DataChangeListner {
 			SellerFormController controller = loader.getController(); // PEGANDO O CONTROLADOR DA TELA CARREGADA
 																		// ACIMA
 			controller.setSeller(obj); // INJETANDO O DEPARTAMENTO NO CONTROLLER
-			controller.setSellerService(new SellerService()); // INJETANDO O DEPARTMENT SERVICE NO CONTROLLER
+			controller.setServices(new SellerService(), new DepartmentService()); // INJETANDO O DEPARTMENT SERVICE NO CONTROLLER
+			controller.loadAssociatedObjects(); // CARREGA OS DEPARTAMENTOS E DEIXA NO CONTROLLER
 			controller.subscribeDataChangeListener(this); // INSCREVENDO O METODO PARA ATUALIZAR A JANELA COM O METODO
 															// (ON DATA CHANGED)
 			controller.updateFormData(); // CARREGANDO OS DADOS NO FORMULARIO
@@ -133,6 +135,7 @@ public class SellerListControler implements Initializable, DataChangeListner {
 			dialogStage.initModality(Modality.WINDOW_MODAL); // JANELA FICA TRAVADA E NÃO DEIXA ACESSAR A ANTERIOR
 			dialogStage.showAndWait(); // COMANDO PARA CARREGAR
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
