@@ -1,7 +1,7 @@
 package gui;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -16,9 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -26,8 +24,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
 import model.services.SellerService;
@@ -44,6 +40,15 @@ public class SellerListControler implements Initializable, DataChangeListner {
 
 	@FXML
 	private TableColumn<Seller, String> tableColumName;
+	
+	@FXML
+	private TableColumn<Seller, Integer> tableColumnEmail;
+	
+	@FXML
+	private TableColumn<Seller, Date> tableColumnBirthDate;
+	
+	@FXML
+	private TableColumn<Seller, Double> tableColumnBaseSalary;
 
 	@FXML
 	private TableColumn<Seller, Seller> tableColumnEDIT;
@@ -74,13 +79,19 @@ public class SellerListControler implements Initializable, DataChangeListner {
 	}
 
 	private void initializeNodes() {
-		tableColumId.setCellValueFactory(new PropertyValueFactory<>("Id")); // METODO PADRAO PARA INICIAR O
-																			// COMPORTAMENTO DAS COLUNAS
-		tableColumName.setCellValueFactory(new PropertyValueFactory<>("Name"));
-
+		tableColumId.setCellValueFactory(new PropertyValueFactory<>("id")); // INICIA O COMPORTAMENTO DOS ATRIBUTOS DA COLUNA SELLER
+		tableColumName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+		tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+		Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy"); // FORMATAÇÃO DATA
+		tableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
+		Utils.formatTableColumnDouble(tableColumnBaseSalary, 2); // FORMATAÇÃO DOUBLE
+		
+		
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		tableViewSeller.prefHeightProperty().bind(stage.heightProperty()); // METODO PARA O TABLE VIEW SE ADAPTAR AO
 																			// TAMANHO DA JANELA
+		
 	}
 
 	public void updateTableView() { // METODO RESPONSÁVEL POR ATUALIZAR OS DEPARTAMENTOS E INSERIR NA LISTA OBSLIST
