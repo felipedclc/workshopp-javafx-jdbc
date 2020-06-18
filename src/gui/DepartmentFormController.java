@@ -95,7 +95,7 @@ public class DepartmentFormController implements Initializable {
 
 		if (txtName.getText() == null || txtName.getText().trim().equals(" ")) {// TRIM REMOVE ESPAÇO EM BRANCO QUE
 																				// ESTEJA NO INICIO OU FIM
-			exception.addErro("name", "Field can't be empty");
+			exception.addError("name", "Field can't be empty");
 		}
 		obj.setName(txtName.getText()); // EDITA O NOME
 

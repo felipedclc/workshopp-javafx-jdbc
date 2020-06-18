@@ -17,7 +17,7 @@ public class ValidationException extends RuntimeException { // TEM A FUNÇAO DE C
 		return errors;
 	}
 
-	public void addErro(String fieldName, String errorMensage) { // ADICIONANDO POSSIVEIS ERROS
+	public void addError(String fieldName, String errorMensage) { // ADICIONANDO POSSIVEIS ERROS
 		errors.put(fieldName, errorMensage);
 	}
 }
