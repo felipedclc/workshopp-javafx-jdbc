@@ -1,5 +1,6 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -24,6 +27,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
 import model.services.SellerService;
@@ -107,7 +112,29 @@ public class SellerListControler implements Initializable, DataChangeListner {
 
 	private void createDialogForm(Seller obj, String absoluteName, Stage parentStage) {
 
-		
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName)); // CARREGANDO A JANELA (VIEW
+																						// "ABSOLUTE NAME")
+			Pane pane = loader.load(); // CARREGANDO A VIEW
+
+			SellerFormController controller = loader.getController(); // PEGANDO O CONTROLADOR DA TELA CARREGADA
+																		// ACIMA
+			controller.setSeller(obj); // INJETANDO O DEPARTAMENTO NO CONTROLLER
+			controller.setSellerService(new SellerService()); // INJETANDO O DEPARTMENT SERVICE NO CONTROLLER
+			controller.subscribeDataChangeListener(this); // INSCREVENDO O METODO PARA ATUALIZAR A JANELA COM O METODO
+															// (ON DATA CHANGED)
+			controller.updateFormData(); // CARREGANDO OS DADOS NO FORMULARIO
+
+			Stage dialogStage = new Stage(); // CRIANDO UMA JANELA PARA ABRIR EM CIMA DA OUTRA
+			dialogStage.setTitle("Enter Seller data");
+			dialogStage.setScene(new Scene(pane)); // CARREGANDO O NOVO PAINEL NA NOVA CENA
+			dialogStage.setResizable(false); // A JANELA NÃO PODE SER REDIMENSIONADA(FALSE)
+			dialogStage.initOwner(parentStage); // O PARENT STAGE É O "PAI" DA JANELA
+			dialogStage.initModality(Modality.WINDOW_MODAL); // JANELA FICA TRAVADA E NÃO DEIXA ACESSAR A ANTERIOR
+			dialogStage.showAndWait(); // COMANDO PARA CARREGAR
+		} catch (IOException e) {
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
 	}
 
 	@Override

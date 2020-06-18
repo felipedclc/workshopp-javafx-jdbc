@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="410.0" prefWidth="483.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SellerListControler">
+<VBox prefHeight="388.0" prefWidth="539.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SellerListControler">
    <children>
       <Label alignment="TOP_LEFT" prefHeight="26.0" prefWidth="165.0" text="Seller registration">
          <font>

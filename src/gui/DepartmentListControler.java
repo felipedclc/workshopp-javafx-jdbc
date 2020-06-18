@@ -126,9 +126,7 @@ public class DepartmentListControler implements Initializable, DataChangeListner
 
 	}
 
-	private void initEditButtons() { // METODO ESPECÍFICO QUE FUNCIONA O BOTÃO "EDIT" NA LISTA DE DEPARTAMENTOS
-										// DENTRO
-										// DA JANELA
+	private void initEditButtons() {
 		tableColumnEDIT.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
 		tableColumnEDIT.setCellFactory(param -> new TableCell<Department, Department>() {
 			private final Button button = new Button("edit");
@@ -147,7 +145,7 @@ public class DepartmentListControler implements Initializable, DataChangeListner
 		});
 	}
 
-	private void initRemoveButtons() { // METODO ESPECÍFICO QUE FUNCIONA O BOTÃO "REMOVE" NA LISTA DE DEPARTAMENTOS
+	private void initRemoveButtons() { // METODO FUNCIONA O BOTÃO "REMOVE" NA LISTA DE DEPARTAMENTOS
 										// DENTRO
 										// DA JANELA
 		tableColumnREMOVE.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
@@ -174,13 +172,13 @@ public class DepartmentListControler implements Initializable, DataChangeListner
 
 		if (result.get() == ButtonType.OK) { // SE APERTAR NO BOTAO OK (USAR O GET PORQUE O RESULT PODE SER NULO)
 			if (service == null) {
-				throw new IllegalStateException("Service was null"); // PROGRAMADOR ESQUECEU DE INJETAR(INSTANCIAR) O SERVICE
+				throw new IllegalStateException("Service was null"); // PROGRAMADOR ESQUECEU DE INJETAR(INSTANCIAR) O
+																		// SERVICE
 			}
 			try {
 				service.remove(obj); // REMOVE O QUE FOI SELECIONADO
-				updateTableView();   // ATUALIZA EM TEMPO REAL 
-			}
-			catch(DbIntegrityException e){
+				updateTableView(); // ATUALIZA EM TEMPO REAL
+			} catch (DbIntegrityException e) {
 				Alerts.showAlert("Error removing object", null, e.getMessage(), AlertType.ERROR);
 			}
 		}
